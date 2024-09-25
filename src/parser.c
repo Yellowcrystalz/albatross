@@ -13,9 +13,10 @@ void parse (char buffer[BUFFER_SIZE])
     int lineCounter = 0;
 
     parseLine(buffer, line, &bufferCounter);
-    parseMethod(line, &parsedHttp, &lineCounter);
-    parsePath(line, &parsedHttp, &lineCounter);
-    parseProtocol(line, &parsedHttp, &lineCounter);
+    parseRequestLine(line, parsedHttp.method, &lineCounter, METHOD_SIZE);
+    parseRequestLine(line, parsedHttp.path, &lineCounter, PATH_SIZE);
+    parseRequestLine(line, parsedHttp.protocol, &lineCounter, PROTOCOL_SIZE);
+
     parseLine(buffer, line, &bufferCounter);
     parseLine(buffer, line, &bufferCounter);
     lineCounter = 12;
@@ -49,64 +50,24 @@ void parseLine (char* buffer, char* line, int* bufferCounter)
     }
 }
 
-void parseMethod (char* line, HttpReqInfo* parsedHttp, int* lineCounter)
+void parseRequestLine (char* line, char* httpElement, int* lineCounter, int parseLimit)
 {
     char chr = '\0';
 
-    for (int i = 0; i < METHOD_SIZE; i++)
+    for (int i = 0; i < parseLimit; i++)
     {
         chr = *(line + *lineCounter);
 
         if (chr == ' ' || chr == '\0')
         {
-            *(parsedHttp->method + i) = '\0';
+            *(httpElement + i) = '\0';
             (*lineCounter)++;
             break;
         }
             
-        *(parsedHttp->method + i) = chr;
+        *(httpElement + i) = chr;
         (*lineCounter)++;
     }   
-}
-
-void parsePath (char* line, HttpReqInfo* parsedHttp, int* lineCounter)
-{
-    char chr = '\0';
-
-    for (int i = 0; i < PATH_SIZE; i++)
-    {
-        chr = *(line + *lineCounter);
-
-        if (chr == ' ' || chr == '\0')
-        {
-            *(parsedHttp->path + i) = '\0';
-            (*lineCounter)++;
-            break;
-        }
-            
-        *(parsedHttp->path + i) = chr;
-        (*lineCounter)++;
-    }   
-}
-
-void parseProtocol (char* line, HttpReqInfo* parsedHttp, int* lineCounter)
-{
-    char chr = '\0';
-
-    for (int i = 0; i < PROTOCOL_SIZE; i++)
-    {
-        chr = *(line + *lineCounter);
-
-        if (chr == ' ' || chr == '\0')
-        {
-            *(parsedHttp->protocol + i) = '\0';
-            (*lineCounter)++;
-            break;
-        }
-            
-        *(parsedHttp->protocol + i) = chr;
-        (*lineCounter)++;
-    }
 }
 
 void parseConnection (char* line, HttpReqInfo* parsedHttp, int* lineCounter)

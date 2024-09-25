@@ -18,9 +18,7 @@ typedef struct HttpReqInfo
 
 void parse (char buffer[BUFFER_SIZE]);
 void parseLine (char* buffer, char* line, int* counter);
-void parseMethod (char* line, HttpReqInfo* parsedHttp, int* lineCounter);
-void parsePath (char* line, HttpReqInfo* parsedHttp, int* lineCounter);
-void parseProtocol (char* line, HttpReqInfo* parsedHttp, int* lineCounter);
+void parseRequestLine (char* line, char* httpElement, int* lineCounter, int parseLimit);
 void parseConnection (char* line, HttpReqInfo* parsedHttp, int* lineCounter);
 
 #endif

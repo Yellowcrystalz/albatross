@@ -1,30 +1,21 @@
-#include <stdio.h>
-
 #include "albatross.h"
 #include "parser.h"
 
-void parse (char buffer[BUFFER_SIZE], HttpResponse* httpRes)
+void parse (char buffer[BUFFER_SIZE], HttpResponseInfo* httpResInfo)
 {
-    //HttpResponse httpRes; 
-
     char line[BUFFER_SIZE];    
     int bufferCounter = 0;
     int lineCounter = 0;
 
     parseLine(buffer, line, &bufferCounter);
-    parseRequestLine(line, httpRes->method, &lineCounter, METHOD_SIZE);
-    parseRequestLine(line, httpRes->path, &lineCounter, PATH_SIZE);
-    parseRequestLine(line, httpRes->protocol, &lineCounter, PROTOCOL_SIZE);
+    parseRequestLine(line, httpResInfo->method, &lineCounter, METHOD_SIZE);
+    parseRequestLine(line, httpResInfo->path, &lineCounter, PATH_SIZE);
+    parseRequestLine(line, httpResInfo->protocol, &lineCounter, PROTOCOL_SIZE);
 
     parseLine(buffer, line, &bufferCounter);
     parseLine(buffer, line, &bufferCounter);
     lineCounter = 12;
-    parseConnection(line, httpRes, &lineCounter);
-
-    (void)printf("Method: %s\n", httpRes->method);
-    (void)printf("Path: %s\n", httpRes->path);
-    (void)printf("Protocol: %s\n", httpRes->protocol);
-    (void)printf("Connection: %s\n", httpRes->connection);
+    parseConnection(line, httpResInfo, &lineCounter);
 
 }
 
@@ -56,7 +47,7 @@ void parseRequestLine (char* line, char* httpElement, int* lineCounter, int pars
     {
         chr = *(line + *lineCounter);
 
-        if (chr == ' ' || chr == '\0')
+        if (chr == ' ' || chr == '\r' || chr == '\0')
         {
             *(httpElement + i) = '\0';
             (*lineCounter)++;
@@ -68,7 +59,7 @@ void parseRequestLine (char* line, char* httpElement, int* lineCounter, int pars
     }   
 }
 
-void parseConnection (char* line, HttpResponse* httpRes, int* lineCounter)
+void parseConnection (char* line, HttpResponseInfo* httpResInfo, int* lineCounter)
 {
     char chr = '\0';
 
@@ -78,12 +69,12 @@ void parseConnection (char* line, HttpResponse* httpRes, int* lineCounter)
 
         if (chr == ' ' || chr == '\0')
         {
-            *(httpRes->connection + i) = '\0';
+            *(httpResInfo->connection + i) = '\0';
             (*lineCounter)++;
             break;
         }
             
-        *(httpRes->connection + i) = chr;
+        *(httpResInfo->connection + i) = chr;
         (*lineCounter)++;
     }
 }

@@ -8,14 +8,14 @@
 #define CONNECTION_SIZE 16
 #define STATUS_SIZE 4
 
-typedef struct HttpResponse
+typedef struct HttpResponseInfo
 {
     char method[METHOD_SIZE];
     char path[PATH_SIZE];
     char protocol[PROTOCOL_SIZE]; 
     char connection[CONNECTION_SIZE];
     char status[STATUS_SIZE];
-    long content;
-} HttpResponse;
+    long content_length;
+} HttpResponseInfo;
 
 #endif // !ALBATROSS_H

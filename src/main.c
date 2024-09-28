@@ -8,6 +8,7 @@
 
 #include "albatross.h"
 #include "parser.h"
+#include "responder.h"
 
 int main(void)
 {
@@ -36,15 +37,19 @@ int main(void)
     char buffer[BUFFER_SIZE] = {0};
     recv(client_fd, buffer, BUFFER_SIZE, 0);
     //(void)printf("%s\n", buffer);
-    parse(buffer); 
+
+    HttpResponse httpRes = {0};
+    parse(buffer, &httpRes); 
+    int html_fd = findFile(&httpRes);
+    httpHeaderBuilder(&httpRes);
 
     //char* file = buffer + 5;
     //*strchr(file, ' ') = 0;
 
     //int opened_fd = open(file, O_RDONLY);
-    //sendfile(client_fd, opened_fd, 0, BUFFER_SIZE);
+    sendfile(client_fd, html_fd, 0, BUFFER_SIZE);
 
-    //close(opened_fd);
+    close(html_fd);
     close(client_fd);
     close(s);
 
